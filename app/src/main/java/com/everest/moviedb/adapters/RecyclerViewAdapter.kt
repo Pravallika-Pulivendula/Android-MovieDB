@@ -11,11 +11,11 @@ import com.bumptech.glide.Glide
 import com.everest.moviedb.R
 import com.everest.moviedb.models.Movie
 
-class MovieAdapter(
+class RecyclerViewAdapter(
     private var movies: List<Movie>,
     private val context: Context
 ) :
-    RecyclerView.Adapter<MovieAdapter.MovieItemViewHolder>() {
+    RecyclerView.Adapter<RecyclerViewAdapter.MovieItemViewHolder>() {
 
     private lateinit var onItemClickListener: OnItemClickListener
 
@@ -57,11 +57,6 @@ class MovieAdapter(
         Glide.with(context)
             .load("https://image.tmdb.org/t/p/w500" + movie.poster_path)
             .into(holder.movieThumbnail)
-    }
-
-    fun filterMovie(filterMovies: List<Movie>) {
-        movies = filterMovies
-        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int = movies.size
