@@ -37,8 +37,8 @@ class RepositoryViewModel(private val retrofitRepository: RetrofitRepository) : 
         })
     }
 
-    fun getLatestMovie() {
-        val response = retrofitRepository.getLatestMovies()
+    fun getLatestMovie(year: Int) {
+        val response = retrofitRepository.getLatestMovies(year)
         response.enqueue(object : Callback<MovieResponse> {
             override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
                 val movieResponseList = response.body()!!
