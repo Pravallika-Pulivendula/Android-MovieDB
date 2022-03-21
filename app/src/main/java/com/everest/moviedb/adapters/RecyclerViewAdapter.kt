@@ -19,7 +19,6 @@ class RecyclerViewAdapter(
 
     private lateinit var onItemClickListener: OnItemClickListener
 
-
     interface OnItemClickListener {
         fun onItemClick(position: Int)
     }
