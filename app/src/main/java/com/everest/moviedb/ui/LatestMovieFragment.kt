@@ -14,9 +14,10 @@ import com.everest.moviedb.models.Movie
 import com.everest.moviedb.network.RetrofitClient
 import com.everest.moviedb.network.RetrofitRepository
 import com.everest.moviedb.utils.MOVIE_DETAILS
-import com.everest.moviedb.viewmodel.RepositoryViewModel
 import com.everest.moviedb.viewmodel.MovieViewModel
+import com.everest.moviedb.viewmodel.RepositoryViewModel
 import com.everest.moviedb.viewmodel.ViewModelFactory
+import java.util.*
 
 class LatestMovieFragment : Fragment(R.layout.fragment_latest_movie) {
     private lateinit var recyclerView: RecyclerView
@@ -46,7 +47,7 @@ class LatestMovieFragment : Fragment(R.layout.fragment_latest_movie) {
         repositoryViewModel.latestMovieList.observe(viewLifecycleOwner, Observer {
             setRecyclerViewAdapter(it)
         })
-        repositoryViewModel.getLatestMovie()
+        repositoryViewModel.getLatestMovie(Calendar.YEAR)
     }
 
     private fun setRecyclerViewAdapter(movies: List<Movie>) {
@@ -65,7 +66,7 @@ class LatestMovieFragment : Fragment(R.layout.fragment_latest_movie) {
 
     private fun displayMovieDetails() {
         val intent = Intent(requireActivity(), DetailsActivity::class.java)
-        intent.putExtra(MOVIE_DETAILS,movieViewModel.movies.value)
+        intent.putExtra(MOVIE_DETAILS, movieViewModel.movies.value)
         startActivity(intent)
     }
 }

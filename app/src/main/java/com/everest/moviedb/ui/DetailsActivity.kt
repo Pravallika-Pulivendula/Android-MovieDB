@@ -6,6 +6,7 @@ import com.bumptech.glide.Glide
 import com.everest.moviedb.databinding.ActivityDetailsBinding
 import com.everest.moviedb.models.Movie
 import com.everest.moviedb.network.RetrofitClient
+import com.everest.moviedb.utils.MOVIE_DETAILS
 
 class DetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailsBinding
@@ -21,7 +22,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun displayMovieDetails() {
-        val movie: Movie? = intent.getParcelableExtra<Movie>("MOVIE_DETAILS")
+        val movie: Movie? = intent.getParcelableExtra(MOVIE_DETAILS)
         binding.movieTitleTV.text = movie?.title
         binding.movieDescriptionTV.text = movie?.overview
         Glide.with(this)
