@@ -1,4 +1,3 @@
 package com.everest.moviedb.utils
 
-class Constants {
-}
+const val MOVIE_DETAILS = "MOVIE_DETAILS"
