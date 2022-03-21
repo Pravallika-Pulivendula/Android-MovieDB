@@ -1,4 +1,4 @@
-package com.everest.moviedb
+package com.everest.moviedb.ui
 
 import android.os.Bundle
 import android.view.View
@@ -7,6 +7,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.everest.moviedb.viewmodel.MovieViewModel
+import com.everest.moviedb.R
+import com.everest.moviedb.network.RetrofitApi
+import com.everest.moviedb.network.RetrofitClient
+import com.everest.moviedb.adapters.RecyclerViewAdapter
+import com.everest.moviedb.models.Movie
+import com.everest.moviedb.models.MovieResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import retrofit2.Call
@@ -19,24 +26,21 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
     private var movies: List<Movie> = listOf()
     private lateinit var recyclerView: RecyclerView
     private lateinit var movieViewModel: MovieViewModel
-    private lateinit var detailsFragment: DetailsFragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         super.onViewCreated(view, savedInstanceState)
-        detailsFragment = DetailsFragment()
         movieViewModel = activity?.let { ViewModelProvider(it)[MovieViewModel::class.java] }
             ?: throw RuntimeException("Not a Activity")
         val retrofitClient = RetrofitClient()
         val retrofit = retrofitClient.getClient()
         retrofitAPI = retrofit.create(RetrofitApi::class.java)
-        getMovie()
         recyclerView = view.findViewById(R.id.recyclerView)
 
+        getPopularMovies()
     }
 
-    private fun getMovie() {
-        val call = retrofitAPI.getMovie(RetrofitClient.api_key)
+    private fun getPopularMovies() {
+        val call = retrofitAPI.getPopularMovies(RetrofitClient.api_key)
 
         call.enqueue(object : Callback<MovieResponse> {
             override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
@@ -46,15 +50,13 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
                     val gson = Gson()
                     val listType: Type = object : TypeToken<Collection<Movie?>?>() {}.type
                     movies = gson.fromJson(movieResponse, listType)
-
                 }
                 setRecyclerViewAdapter(movies)
             }
 
             override fun onFailure(call: Call<MovieResponse>, t: Throwable) {
-                Toast.makeText(context, "yess", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "No response", Toast.LENGTH_SHORT).show()
             }
-
         })
     }
 
@@ -62,17 +64,22 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
         recyclerView.layoutManager = LinearLayoutManager(activity).apply {
             orientation = LinearLayoutManager.VERTICAL
         }
-        val movieAdapter = context?.let { MovieAdapter(movies, it) }
+        val movieAdapter = context?.let { RecyclerViewAdapter(movies, it) }
         recyclerView.adapter = movieAdapter
-        movieAdapter?.setOnItemClickListener(object : MovieAdapter.OnItemClickListener {
+        movieAdapter?.setOnItemClickListener(object : RecyclerViewAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 movieViewModel.setMovie(movies[position])
-                activity?.supportFragmentManager?.beginTransaction()?.apply {
-                    replace(R.id.fragment_one, detailsFragment)
-                    commit()
-                }
+                replaceFragment()
             }
         })
+    }
+
+    private fun replaceFragment() {
+        activity?.supportFragmentManager?.beginTransaction()?.apply {
+            replace(R.id.fragment_one, DetailsFragment())
+            addToBackStack(null)
+            commit()
+        }
     }
 
     override fun onDetach() {
