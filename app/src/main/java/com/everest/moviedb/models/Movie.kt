@@ -1,4 +1,4 @@
-package com.everest.moviedb
+package com.everest.moviedb.models
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
