@@ -1,4 +1,4 @@
-package com.everest.moviedb
+package com.everest.moviedb.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,9 +8,6 @@ import com.everest.moviedb.models.Movie
 class MovieViewModel : ViewModel() {
     private var _movies = MutableLiveData<Movie>()
     var movies: LiveData<Movie> = _movies
-
-    private var _movieName = MutableLiveData<String>()
-    var movieName: LiveData<String> = _movieName
 
     fun setMovie(movie: Movie) {
         this._movies.value =
