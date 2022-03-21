@@ -16,7 +16,7 @@ import com.everest.moviedb.models.Movie
 import com.everest.moviedb.network.RetrofitClient
 import com.everest.moviedb.network.RetrofitRepository
 import com.everest.moviedb.utils.MOVIE_DETAILS
-import com.everest.moviedb.viewmodel.MainViewModel
+import com.everest.moviedb.viewmodel.RepositoryViewModel
 import com.everest.moviedb.viewmodel.MovieViewModel
 import com.everest.moviedb.viewmodel.ViewModelFactory
 
@@ -25,7 +25,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var movieViewModel: MovieViewModel
-    private lateinit var mainViewModel: MainViewModel
+    private lateinit var repositoryViewModel: RepositoryViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +35,10 @@ class SearchActivity : AppCompatActivity() {
 
         val retrofitClient = RetrofitClient()
 
-        mainViewModel = ViewModelProvider(
+        repositoryViewModel = ViewModelProvider(
             this,
             ViewModelFactory(RetrofitRepository(retrofitClient.getClient()))
-        ).get(MainViewModel::class.java)
+        ).get(RepositoryViewModel::class.java)
 
         recyclerView = binding.recyclerView
 
@@ -68,10 +68,10 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchMovieByName(movieName: String) {
-        mainViewModel.movie.observe(this) {
+        repositoryViewModel.movie.observe(this) {
             setRecyclerViewAdapter(it)
         }
-        mainViewModel.getMovieByName(movieName)
+        repositoryViewModel.getMovieByName(movieName)
     }
 
     private fun setRecyclerViewAdapter(movies: List<Movie>) {
