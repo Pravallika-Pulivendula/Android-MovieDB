@@ -1,4 +1,4 @@
-package com.everest.moviedb
+package com.everest.moviedb.network
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
