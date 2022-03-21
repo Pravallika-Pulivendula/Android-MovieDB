@@ -1,4 +1,4 @@
-package com.everest.moviedb
+package com.everest.moviedb.network
 
 import com.everest.moviedb.models.MovieResponse
 import retrofit2.Call
