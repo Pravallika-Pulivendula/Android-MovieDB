@@ -1,0 +1,21 @@
+package com.everest.moviedb
+
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+class RetrofitClient {
+    private val BASE_URL: String = "https://api.themoviedb.org/3/"
+
+    companion object {
+        const val api_key: String = "e857bbab0881a32fb4ca66325107a830"
+    }
+
+    fun getClient(): Retrofit {
+        val okHttpClient = OkHttpClient.Builder().build()
+        return Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(okHttpClient)
+            .baseUrl(BASE_URL).build()
+    }
+}
