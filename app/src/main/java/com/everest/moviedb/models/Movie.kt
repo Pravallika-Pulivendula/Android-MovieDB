@@ -1,9 +1,12 @@
 package com.everest.moviedb.models
 
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
+@Entity(tableName = "movies")
 class Movie(
     val adult: Boolean,
     val backdrop_path: String,
@@ -15,8 +18,9 @@ class Movie(
     val popularity: Double,
     val poster_path: String,
     val release_date: String,
+    @PrimaryKey
     val title: String,
     val video: Boolean,
     val vote_average: Double,
     val vote_count: Long
-):Parcelable
+) : Parcelable

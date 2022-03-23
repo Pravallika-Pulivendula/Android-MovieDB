@@ -3,7 +3,6 @@ package com.everest.moviedb.adapters
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import com.everest.moviedb.ui.LatestMovieFragment
 import com.everest.moviedb.ui.PopularMovieFragment
 
 class PageAdapter(fragmentManager: FragmentManager) : FragmentStatePagerAdapter(fragmentManager) {
@@ -17,7 +16,7 @@ class PageAdapter(fragmentManager: FragmentManager) : FragmentStatePagerAdapter(
                 PopularMovieFragment()
             }
             1 -> {
-                LatestMovieFragment()
+                PopularMovieFragment()
             }
             else -> {
                 PopularMovieFragment()
