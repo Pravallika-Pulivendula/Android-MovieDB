@@ -9,10 +9,9 @@ interface RetrofitService {
     @GET("movie/popular")
     fun getPopularMovies(@Query("api_key") api_key: String): Call<MovieResponse>
 
-    @GET("discover/movie")
+    @GET("movie/now_playing")
     fun getLatestMovies(
-        @Query("api_key") api_key: String,
-        @Query("year") year: Int
+        @Query("api_key") api_key: String
     ): Call<MovieResponse>
 
     @GET("search/movie")

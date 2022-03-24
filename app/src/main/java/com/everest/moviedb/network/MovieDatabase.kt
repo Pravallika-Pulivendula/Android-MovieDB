@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.everest.moviedb.MovieDao
 import com.everest.moviedb.models.Movie
 
 @Database(entities = [Movie::class], version = 2)

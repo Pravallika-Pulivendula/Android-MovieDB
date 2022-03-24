@@ -32,16 +32,15 @@ class HomeFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_search ->
-                false
-//                loadActivity()
+                loadActivity()
         }
         return super.onOptionsItemSelected(item)
     }
 
-//    private fun loadActivity() {
-//        val intent = Intent(requireActivity(), SearchActivity::class.java)
-//        startActivity(intent)
-//    }
+    private fun loadActivity() {
+        val intent = Intent(requireActivity(), SearchActivity::class.java)
+        startActivity(intent)
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)

@@ -4,28 +4,29 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.everest.moviedb.models.Movie
+import com.everest.moviedb.network.MovieRepository
 
-class MovieViewModel : ViewModel() {
-    private var _movies = MutableLiveData<Movie>()
-    var movies: LiveData<Movie> = _movies
+class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
-    fun setMovie(movie: Movie) {
-        this._movies.value =
-            Movie(
-                movie.adult,
-                movie.backdrop_path,
-                movie.genre_ids,
-                movie.id,
-                movie.original_language,
-                movie.original_title,
-                movie.overview,
-                movie.popularity,
-                movie.poster_path,
-                movie.release_date,
-                movie.title,
-                movie.video,
-                movie.vote_average,
-                movie.vote_count
-            )
+    private var _popularMovieList = MutableLiveData<List<Movie>>()
+    var popularMovieList: LiveData<List<Movie>> = _popularMovieList
+
+    private var _latestMovieList = MutableLiveData<List<Movie>>()
+    var latestMovieList: LiveData<List<Movie>> = _latestMovieList
+
+    private var _movies = MutableLiveData<List<Movie>>()
+    var movies: LiveData<List<Movie>> = _movies
+
+    fun getPopularMovies() {
+        _popularMovieList.value = movieRepository.getPopularMovies()
     }
+
+    fun getLatestMovies() {
+        _latestMovieList.value = movieRepository.getLatestMovies()
+    }
+
+    fun getMovies(movieName: String) {
+        _movies.value = movieRepository.getMovieByName(movieName)
+    }
+
 }
