@@ -1,31 +1,48 @@
 package com.everest.moviedb.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.everest.moviedb.models.Movie
+import com.everest.moviedb.network.MovieRepository
+import kotlinx.coroutines.launch
 
-class MovieViewModel : ViewModel() {
-    private var _movies = MutableLiveData<Movie>()
-    var movies: LiveData<Movie> = _movies
+class RepositoryViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
-    fun setMovie(movie: Movie) {
-        this._movies.value =
-            Movie(
-                movie.adult,
-                movie.backdrop_path,
-                movie.genre_ids,
-                movie.id,
-                movie.original_language,
-                movie.original_title,
-                movie.overview,
-                movie.popularity,
-                movie.poster_path,
-                movie.release_date,
-                movie.title,
-                movie.video,
-                movie.vote_average,
-                movie.vote_count
-            )
+    val errorMessage = MutableLiveData<String>()
+    val popularMovieList = MutableLiveData<List<Movie>>()
+    val latestMovieList = MutableLiveData<List<Movie>>()
+    val movieList = MutableLiveData<List<Movie>>()
+
+
+    fun getPopularMovies() {
+        viewModelScope.launch {
+            val response = movieRepository.getPopularMovies()
+            if (response.isSuccessful) {
+                val movieResponseList = response.body()
+                popularMovieList.value = movieResponseList!!.results
+            }
+        }
     }
+
+    fun getLatestMovies(year: Int) {
+        viewModelScope.launch {
+            val response = movieRepository.getLatestMovies(year)
+            if (response.isSuccessful) {
+                val movieResponseList = response.body()
+                latestMovieList.value = movieResponseList!!.results
+            }
+        }
+    }
+
+    fun searchMovie(movieName: String) {
+        viewModelScope.launch {
+            val response = movieRepository.getMovieByName(movieName)
+            if (response.isSuccessful) {
+                val movieResponseList = response.body()
+                movieList.value = movieResponseList!!.results
+            }
+        }
+    }
+
 }
