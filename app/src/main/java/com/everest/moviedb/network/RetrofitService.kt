@@ -1,23 +1,23 @@
 package com.everest.moviedb.network
 
 import com.everest.moviedb.models.MovieResponse
-import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface RetrofitService {
     @GET("movie/popular")
-    fun getPopularMovies(@Query("api_key") api_key: String): Call<MovieResponse>
+    suspend fun getPopularMovies(@Query("api_key") api_key: String): Response<MovieResponse>
 
     @GET("discover/movie")
-    fun getLatestMovies(
+    suspend fun getLatestMovies(
         @Query("api_key") api_key: String,
         @Query("year") year: Int
-    ): Call<MovieResponse>
+    ): Response<MovieResponse>
 
     @GET("search/movie")
-    fun getMovieByName(
+    suspend fun getMovieByName(
         @Query("api_key") api_key: String,
         @Query("query") movieName: String
-    ): Call<MovieResponse>
+    ): Response<MovieResponse>
 }

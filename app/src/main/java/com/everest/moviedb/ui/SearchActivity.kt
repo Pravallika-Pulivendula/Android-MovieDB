@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,10 +14,10 @@ import com.everest.moviedb.R
 import com.everest.moviedb.adapters.RecyclerViewAdapter
 import com.everest.moviedb.databinding.ActivitySearchBinding
 import com.everest.moviedb.models.Movie
+import com.everest.moviedb.network.MovieRepository
 import com.everest.moviedb.network.RetrofitClient
-import com.everest.moviedb.network.RetrofitRepository
 import com.everest.moviedb.utils.MOVIE_DETAILS
-import com.everest.moviedb.viewmodel.RepositoryViewModel
+import com.everest.moviedb.viewmodel.MovieData
 import com.everest.moviedb.viewmodel.MovieViewModel
 import com.everest.moviedb.viewmodel.ViewModelFactory
 
@@ -25,26 +26,22 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var movieViewModel: MovieViewModel
-    private lateinit var repositoryViewModel: RepositoryViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
 
-        movieViewModel = let { ViewModelProvider(it)[MovieViewModel::class.java] }
-
         val retrofitClient = RetrofitClient()
 
-        repositoryViewModel = ViewModelProvider(
+        movieViewModel = ViewModelProvider(
             this,
-            ViewModelFactory(RetrofitRepository(retrofitClient.getClient()))
-        ).get(RepositoryViewModel::class.java)
+            ViewModelFactory(MovieRepository(retrofitClient))
+        ).get(MovieViewModel::class.java)
 
         recyclerView = binding.recyclerView
 
         setContentView(binding.root)
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
@@ -68,10 +65,14 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchMovieByName(movieName: String) {
-        repositoryViewModel.movie.observe(this) {
-            setRecyclerViewAdapter(it)
+        movieViewModel.movieData.observe(this) { movieData ->
+            when (movieData) {
+                is MovieData.SearchMovies -> setRecyclerViewAdapter(movieData.movieList)
+                is MovieData.Error -> movieData.errorMessage?.let { getToastMessage(it) }
+            }
         }
-        repositoryViewModel.getMovieByName(movieName)
+
+        movieViewModel.searchMovie(movieName)
     }
 
     private fun setRecyclerViewAdapter(movies: List<Movie>) {
@@ -80,17 +81,27 @@ class SearchActivity : AppCompatActivity() {
         }
         val movieAdapter = RecyclerViewAdapter(movies, this)
         recyclerView.adapter = movieAdapter
+        setOnItemClickListener(movieAdapter, movies)
+    }
+
+    private fun setOnItemClickListener(
+        movieAdapter: RecyclerViewAdapter,
+        movies: List<Movie>
+    ) {
         movieAdapter.setOnItemClickListener(object : RecyclerViewAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                movieViewModel.setMovie(movies[position])
-                displayMovieDetails()
+                displayMovieDetails(movies[position])
             }
         })
     }
 
-    private fun displayMovieDetails() {
+    private fun displayMovieDetails(movie: Movie) {
         val intent = Intent(this, DetailsActivity::class.java)
-        intent.putExtra(MOVIE_DETAILS, movieViewModel.movies.value)
+        intent.putExtra(MOVIE_DETAILS, movie)
         startActivity(intent)
+    }
+
+    private fun getToastMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
