@@ -10,7 +10,6 @@ import com.everest.moviedb.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -18,15 +17,18 @@ class HomeFragment : Fragment() {
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        val viewPager = binding.viewPager
-        viewPager.adapter = PageAdapter(childFragmentManager)
-
-        val tabLayout = binding.tabLayout
-        tabLayout.setupWithViewPager(viewPager)
-
         setHasOptionsMenu(true)
 
-        return binding.root
+        return _binding!!.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val viewPager = _binding!!.viewPager
+        viewPager.adapter = PageAdapter(childFragmentManager)
+
+        val tabLayout = _binding!!.tabLayout
+        tabLayout.setupWithViewPager(viewPager)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
