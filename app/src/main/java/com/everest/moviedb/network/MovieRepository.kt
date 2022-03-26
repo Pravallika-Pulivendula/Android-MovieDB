@@ -1,21 +1,27 @@
 package com.everest.moviedb.network
 
 import com.everest.moviedb.models.Movie
+import com.everest.moviedb.utils.IMAGE_BASE_URL
 
 
 class MovieRepository(
     private val retrofitClient: RetrofitClient,
     private val movieDatabase: MovieDatabase
 ) {
+    suspend fun getPopularMovies(): List<Movie> {
+        val movieList = retrofitClient.getClient().getPopularMovies()
+        return convertDTOIntoUIModel(movieList.results)
+    }
 
-    suspend fun getPopularMovies() =
-        retrofitClient.getClient().getPopularMovies(RetrofitClient.api_key)
+    suspend fun getLatestMovies(year: Int): List<Movie> {
+        val movieResponse = retrofitClient.getClient().getLatestMovies(year)
+        return convertDTOIntoUIModel(movieResponse.results)
+    }
 
-    suspend fun getLatestMovies() =
-        retrofitClient.getClient().getLatestMovies(RetrofitClient.api_key)
-
-    suspend fun getMovieByName(movieName: String) =
-        retrofitClient.getClient().getMovieByName(RetrofitClient.api_key, movieName)
+    suspend fun searchMovie(movieName: String): List<Movie> {
+        val movieResponse = retrofitClient.getClient().getMovieByName(movieName)
+        return convertDTOIntoUIModel(movieResponse.results)
+    }
 
     suspend fun addMovies(movies: List<Movie>) =
         movieDatabase.movieDao().addMovies(movies)
@@ -23,7 +29,15 @@ class MovieRepository(
     suspend fun getPopularMoviesFromDb() =
         movieDatabase.movieDao().getPopularMoviesFromDb()
 
-    suspend fun getLatestMoviesFromDb() =
-        movieDatabase.movieDao().getLatestMoviesFromDb()
+    suspend fun getLatestMoviesFromDb(year: Int) =
+        movieDatabase.movieDao().getLatestMoviesFromDb(year)
+
+    private fun convertDTOIntoUIModel(movies: List<com.everest.moviedb.network.models.Movie>): List<Movie> {
+        return movies.map {
+            Movie(
+                it.id, it.overview, IMAGE_BASE_URL + it.posterPath, it.title, it.releaseDate
+            )
+        }
+    }
 
 }

@@ -1,6 +1,5 @@
 package com.everest.moviedb.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,9 +9,7 @@ import com.everest.moviedb.network.MovieRepository
 import kotlinx.coroutines.launch
 
 sealed class MovieData {
-    class PopularMovies(val popularMovies: List<Movie>) : MovieData()
-    class LatestMovies(val latestMovies: List<Movie>) : MovieData()
-    class SearchMovies(val movieList: List<Movie>) : MovieData()
+    class Data(val movieList: List<Movie>) : MovieData()
     class Error(val errorMessage: String?) : MovieData()
 }
 
@@ -23,43 +20,37 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
 
     fun getPopularMovies() {
         viewModelScope.launch {
-            val response = movieRepository.getPopularMovies()
-            Log.i("rwtetrwtyrewyr","ouiuytre")
             try {
-                Log.i("ytfde","nooooo")
-                val movieResponseList = response.body()
-                _movieData.postValue(MovieData.PopularMovies(movieResponseList!!.results))
-                Log.i("twfdcs",movieResponseList.results.toString())
-                movieRepository.addMovies(movieResponseList.results)
-            } catch (e: java.lang.Exception)  {
-                Log.i("fegsvg","yesss")
-                _movieData.postValue(MovieData.PopularMovies(movieRepository.getPopularMoviesFromDb()))
+                val response = movieRepository.getPopularMovies()
+                _movieData.postValue(MovieData.Data(response))
+                movieRepository.addMovies(response)
+            } catch (e: java.lang.Exception) {
+                _movieData.postValue(MovieData.Data(movieRepository.getPopularMoviesFromDb()))
             }
         }
     }
 
     fun getLatestMovies(year: Int) {
         viewModelScope.launch {
-            val response = movieRepository.getLatestMovies()
             try {
-                val movieResponseList = response.body()
-                _movieData.postValue(MovieData.LatestMovies(movieResponseList!!.results))
+                val response = movieRepository.getLatestMovies(year)
+                _movieData.postValue(MovieData.Data(response))
+                movieRepository.addMovies(response)
             } catch (e: Exception) {
-                _movieData.postValue(MovieData.Error(e.localizedMessage))
+                _movieData.postValue(MovieData.Data(movieRepository.getLatestMoviesFromDb(year)))
             }
         }
     }
 
     fun searchMovie(movieName: String) {
         viewModelScope.launch {
-            val response = movieRepository.getMovieByName(movieName)
             try {
-                val movieResponseList = response.body()
-                _movieData.postValue(MovieData.SearchMovies(movieResponseList!!.results))
+                val response = movieRepository.searchMovie(movieName)
+                _movieData.postValue(MovieData.Data(response))
+                movieRepository.addMovies(response)
             } catch (e: Exception) {
                 _movieData.postValue(MovieData.Error(e.localizedMessage))
             }
         }
     }
-
 }

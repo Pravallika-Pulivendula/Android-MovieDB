@@ -55,7 +55,7 @@ class RecyclerViewAdapter(
         holder.movieTitle.text = movie.title
         holder.movieDescription.text = movie.overview
         Glide.with(context)
-            .load(RetrofitClient.image_base_url + movie.poster_path)
+            .load(movie.posterPath)
             .into(holder.movieThumbnail)
     }
 

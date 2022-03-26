@@ -30,14 +30,10 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
 
         movieRepository = MovieRepository(RetrofitClient(), MovieDatabase.getDatabase(requireContext()))
 
-        Log.i("tyewfdgc",movieRepository.toString())
-
         movieViewModel = ViewModelProvider(
             this,
             ViewModelFactory(movieRepository)
         ).get(MovieViewModel::class.java)
-
-        Log.i("tyertaf",movieViewModel.toString())
 
         recyclerView = view.findViewById(R.id.recyclerView)
 
@@ -45,15 +41,13 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
     }
 
     private fun getPopularMovies() {
-        Log.i("poioyu","poiouyutrtew")
         movieViewModel.movieData.observe(viewLifecycleOwner) { movieData ->
             when (movieData) {
-                is MovieData.PopularMovies -> setRecyclerViewAdapter(movieData.popularMovies)
+                is MovieData.Data -> setRecyclerViewAdapter(movieData.movieList)
                 is MovieData.Error -> movieData.errorMessage?.let { getToastMessage(it) }
             }
         }
         movieViewModel.getPopularMovies()
-
     }
 
     private fun setRecyclerViewAdapter(movies: List<Movie>) {
@@ -62,6 +56,13 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
         }
         val movieAdapter = context?.let { RecyclerViewAdapter(movies, it) }
         recyclerView.adapter = movieAdapter
+        onItemClickListener(movieAdapter, movies)
+    }
+
+    private fun onItemClickListener(
+        movieAdapter: RecyclerViewAdapter?,
+        movies: List<Movie>
+    ) {
         movieAdapter?.setOnItemClickListener(object : RecyclerViewAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 displayMovieDetails(movies[position])
