@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.everest.moviedb.R
 import com.everest.moviedb.models.Movie
-import com.everest.moviedb.network.RetrofitClient
 
 class RecyclerViewAdapter(
     private var movies: List<Movie>,
@@ -55,7 +54,7 @@ class RecyclerViewAdapter(
         holder.movieTitle.text = movie.title
         holder.movieDescription.text = movie.overview
         Glide.with(context)
-            .load(RetrofitClient.image_base_url + movie.poster_path)
+            .load(movie.poster_path)
             .into(holder.movieThumbnail)
     }
 

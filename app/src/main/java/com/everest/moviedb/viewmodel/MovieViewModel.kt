@@ -9,9 +9,7 @@ import com.everest.moviedb.network.MovieRepository
 import kotlinx.coroutines.launch
 
 sealed class MovieData {
-    class PopularMovies(val popularMovies: List<Movie>) : MovieData()
-    class LatestMovies(val latestMovies: List<Movie>) : MovieData()
-    class SearchMovies(val movieList: List<Movie>) : MovieData()
+    class MovieList(val movieList: List<Movie>) : MovieData()
     class Error(val errorMessage: String?) : MovieData()
 }
 
@@ -24,8 +22,7 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
         viewModelScope.launch {
             val response = movieRepository.getPopularMovies()
             try {
-                val movieResponseList = response.body()
-                _movieData.postValue(MovieData.PopularMovies(movieResponseList!!.results))
+                _movieData.postValue(MovieData.MovieList(response))
             } catch (e: Exception) {
                 _movieData.postValue(MovieData.Error(e.localizedMessage))
             }
@@ -36,8 +33,7 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
         viewModelScope.launch {
             val response = movieRepository.getLatestMovies(year)
             try {
-                val movieResponseList = response.body()
-                _movieData.postValue(MovieData.LatestMovies(movieResponseList!!.results))
+                _movieData.postValue(MovieData.MovieList(response))
             } catch (e: Exception) {
                 _movieData.postValue(MovieData.Error(e.localizedMessage))
             }
@@ -48,8 +44,7 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
         viewModelScope.launch {
             val response = movieRepository.getMovieByName(movieName)
             try {
-                val movieResponseList = response.body()
-                _movieData.postValue(MovieData.SearchMovies(movieResponseList!!.results))
+                _movieData.postValue(MovieData.MovieList(response))
             } catch (e: Exception) {
                 _movieData.postValue(MovieData.Error(e.localizedMessage))
             }

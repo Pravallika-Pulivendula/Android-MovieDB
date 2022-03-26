@@ -40,7 +40,7 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
     private fun getPopularMovies() {
         movieViewModel.movieData.observe(viewLifecycleOwner) { movieData ->
             when (movieData) {
-                is MovieData.PopularMovies -> setRecyclerViewAdapter(movieData.popularMovies)
+                is MovieData.MovieList -> setRecyclerViewAdapter(movieData.movieList)
                 is MovieData.Error -> movieData.errorMessage?.let { getToastMessage(it) }
             }
         }

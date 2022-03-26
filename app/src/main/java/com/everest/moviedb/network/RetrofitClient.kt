@@ -9,7 +9,6 @@ class RetrofitClient {
 
     companion object {
         const val api_key: String = "e857bbab0881a32fb4ca66325107a830"
-        const val image_base_url = "https://image.tmdb.org/t/p/w500"
     }
 
     var retrofitService: RetrofitService? = null

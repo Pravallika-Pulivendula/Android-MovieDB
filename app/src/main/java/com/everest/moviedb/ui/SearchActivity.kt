@@ -67,7 +67,7 @@ class SearchActivity : AppCompatActivity() {
     private fun searchMovieByName(movieName: String) {
         movieViewModel.movieData.observe(this) { movieData ->
             when (movieData) {
-                is MovieData.SearchMovies -> setRecyclerViewAdapter(movieData.movieList)
+                is MovieData.MovieList -> setRecyclerViewAdapter(movieData.movieList)
                 is MovieData.Error -> movieData.errorMessage?.let { getToastMessage(it) }
             }
         }

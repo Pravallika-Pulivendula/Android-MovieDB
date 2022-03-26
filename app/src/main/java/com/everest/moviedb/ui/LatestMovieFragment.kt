@@ -42,7 +42,7 @@ class LatestMovieFragment : Fragment(R.layout.fragment_latest_movie) {
     private fun getLatestMovies() {
         movieViewModel.movieData.observe(viewLifecycleOwner) { movieData ->
             when (movieData) {
-                is MovieData.LatestMovies -> setRecyclerViewAdapter(movieData.latestMovies)
+                is MovieData.MovieList -> setRecyclerViewAdapter(movieData.movieList)
                 is MovieData.Error -> movieData.errorMessage?.let { getToastMessage(it) }
             }
         }
