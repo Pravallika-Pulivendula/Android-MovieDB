@@ -9,11 +9,11 @@ import com.everest.moviedb.models.Movie
 @Dao
 interface MovieDao {
     @Query("SELECT * from movies")
-    fun getPopularMovies(): List<Movie>
+    suspend fun getPopularMoviesFromDb(): List<Movie>
 
     @Query("SELECT * from movies where release_date = '2022-03-11'")
-    fun getLatestMovies(): List<Movie>
+    suspend fun getLatestMoviesFromDb(): List<Movie>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addMovies(movies: List<Movie>)
+    suspend fun addMovies(movies: List<Movie>)
 }

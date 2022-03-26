@@ -12,11 +12,16 @@ class RetrofitClient {
         const val image_base_url = "https://image.tmdb.org/t/p/w500"
     }
 
+    var retrofitService: RetrofitService? = null
+
     fun getClient(): RetrofitService {
         val okHttpClient = OkHttpClient.Builder().build()
-        return Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient)
-            .baseUrl(BASE_URL).build().create(RetrofitService::class.java)
+        if (retrofitService == null) {
+            retrofitService = Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
+                .baseUrl(BASE_URL).build().create(RetrofitService::class.java)
+        }
+        return retrofitService!!
     }
 }

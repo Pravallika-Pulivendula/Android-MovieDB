@@ -1,32 +1,65 @@
 package com.everest.moviedb.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.everest.moviedb.models.Movie
 import com.everest.moviedb.network.MovieRepository
+import kotlinx.coroutines.launch
+
+sealed class MovieData {
+    class PopularMovies(val popularMovies: List<Movie>) : MovieData()
+    class LatestMovies(val latestMovies: List<Movie>) : MovieData()
+    class SearchMovies(val movieList: List<Movie>) : MovieData()
+    class Error(val errorMessage: String?) : MovieData()
+}
 
 class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
-    private var _popularMovieList = MutableLiveData<List<Movie>>()
-    var popularMovieList: LiveData<List<Movie>> = _popularMovieList
-
-    private var _latestMovieList = MutableLiveData<List<Movie>>()
-    var latestMovieList: LiveData<List<Movie>> = _latestMovieList
-
-    private var _movies = MutableLiveData<List<Movie>>()
-    var movies: LiveData<List<Movie>> = _movies
+    private val _movieData = MutableLiveData<MovieData>()
+    val movieData: LiveData<MovieData> = _movieData
 
     fun getPopularMovies() {
-        _popularMovieList.value = movieRepository.getPopularMovies()
+        viewModelScope.launch {
+            val response = movieRepository.getPopularMovies()
+            Log.i("rwtetrwtyrewyr","ouiuytre")
+            try {
+                Log.i("ytfde","nooooo")
+                val movieResponseList = response.body()
+                _movieData.postValue(MovieData.PopularMovies(movieResponseList!!.results))
+                Log.i("twfdcs",movieResponseList.results.toString())
+                movieRepository.addMovies(movieResponseList.results)
+            } catch (e: java.lang.Exception)  {
+                Log.i("fegsvg","yesss")
+                _movieData.postValue(MovieData.PopularMovies(movieRepository.getPopularMoviesFromDb()))
+            }
+        }
     }
 
-    fun getLatestMovies() {
-        _latestMovieList.value = movieRepository.getLatestMovies()
+    fun getLatestMovies(year: Int) {
+        viewModelScope.launch {
+            val response = movieRepository.getLatestMovies()
+            try {
+                val movieResponseList = response.body()
+                _movieData.postValue(MovieData.LatestMovies(movieResponseList!!.results))
+            } catch (e: Exception) {
+                _movieData.postValue(MovieData.Error(e.localizedMessage))
+            }
+        }
     }
 
-    fun getMovies(movieName: String) {
-        _movies.value = movieRepository.getMovieByName(movieName)
+    fun searchMovie(movieName: String) {
+        viewModelScope.launch {
+            val response = movieRepository.getMovieByName(movieName)
+            try {
+                val movieResponseList = response.body()
+                _movieData.postValue(MovieData.SearchMovies(movieResponseList!!.results))
+            } catch (e: Exception) {
+                _movieData.postValue(MovieData.Error(e.localizedMessage))
+            }
+        }
     }
 
 }
