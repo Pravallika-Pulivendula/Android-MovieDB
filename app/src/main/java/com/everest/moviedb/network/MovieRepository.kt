@@ -6,17 +6,17 @@ import com.everest.moviedb.utils.IMAGE_BASE_URL
 class MovieRepository(private val retrofitClient: RetrofitClient) {
 
     suspend fun getPopularMovies() : List<Movie>{
-        val movieList = retrofitClient.getClient().getPopularMovies(RetrofitClient.api_key)
+        val movieList = retrofitClient.getClient().getPopularMovies()
         return convertDTOIntoUIModel(movieList.results)
     }
 
     suspend fun getLatestMovies(year: Int) : List<Movie>{
-        val movieResponse = retrofitClient.getClient().getLatestMovies(RetrofitClient.api_key,year)
+        val movieResponse = retrofitClient.getClient().getLatestMovies(year)
         return convertDTOIntoUIModel(movieResponse.results)
     }
 
     suspend fun getMovieByName(movieName: String) : List<Movie>{
-        val movieResponse = retrofitClient.getClient().getMovieByName(RetrofitClient.api_key,movieName)
+        val movieResponse = retrofitClient.getClient().getMovieByName(movieName)
         return convertDTOIntoUIModel(movieResponse.results)
     }
 
