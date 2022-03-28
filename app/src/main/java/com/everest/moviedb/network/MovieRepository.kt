@@ -35,7 +35,8 @@ class MovieRepository(
     private fun convertDTOIntoUIModel(movies: List<com.everest.moviedb.network.models.Movie>): List<Movie> {
         return movies.map {
             Movie(
-                it.id, it.overview, IMAGE_BASE_URL + it.posterPath, it.title, it.releaseDate
+                it.id, it.overview, IMAGE_BASE_URL + it.posterPath, it.title,
+                it.releaseDate.subSequence(0,4) as String
             )
         }
     }

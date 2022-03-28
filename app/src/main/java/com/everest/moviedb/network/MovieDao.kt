@@ -8,7 +8,7 @@ import com.everest.moviedb.models.Movie
 
 @Dao
 interface MovieDao {
-    @Query("SELECT * from movies ")
+    @Query("SELECT * from movies")
     suspend fun getPopularMoviesFromDb(): List<Movie>
 
     @Query("SELECT * from movies where releaseDate =:year")
