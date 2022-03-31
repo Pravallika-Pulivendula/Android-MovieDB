@@ -40,7 +40,6 @@ class RecyclerViewAdapter(
                 listener.onItemClick(absoluteAdapterPosition)
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieItemViewHolder {
