@@ -44,8 +44,9 @@ class SearchActivity : AppCompatActivity() {
         recyclerView = binding.recyclerView
 
         setContentView(binding.root)
-    }
 
+        searchMovieByName()
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
@@ -56,23 +57,22 @@ class SearchActivity : AppCompatActivity() {
         searchView.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    searchMovieByName(query)
+                    movieViewModel.searchMovie(query)
                     return false
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
-                    searchMovieByName(newText)
+                    movieViewModel.searchMovie(newText)
                     return false
                 }
             })
         return super.onCreateOptionsMenu(menu)
     }
 
-    private fun searchMovieByName(movieName: String) {
+    private fun searchMovieByName() {
         movieViewModel.movieData.observe(this) {
             setRecyclerViewAdapter(it)
         }
-        movieViewModel.searchMovie(movieName)
     }
 
     private fun setRecyclerViewAdapter(movies: List<Movie>) {
@@ -95,5 +95,4 @@ class SearchActivity : AppCompatActivity() {
         intent.putExtra(MOVIE_DETAILS, movie)
         startActivity(intent)
     }
-
 }
