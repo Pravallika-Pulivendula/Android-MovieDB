@@ -28,7 +28,7 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        movieRepository = MovieRepository(RetrofitClient(), MovieDatabase.getDatabase(requireContext()))
+        movieRepository = MovieRepository(RetrofitClient().retrofitService, MovieDatabase.getDatabase(requireContext()).movieDao())
 
         movieViewModel = ViewModelProvider(
             this,
@@ -57,6 +57,7 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
         val movieAdapter = context?.let { RecyclerViewAdapter(movies, it) }
         recyclerView.adapter = movieAdapter
         onItemClickListener(movieAdapter, movies)
+//        movieAdapter?.setOnItemClickListener(itemClickListener)
     }
 
     private fun onItemClickListener(
@@ -69,6 +70,13 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
             }
         })
     }
+
+//    private val itemClickListener = object : RecyclerViewAdapter.OnItemClickListener {
+//        override fun onItemClick(position: Int) {
+//            displayMovieDetails(movies[position])
+//        }
+//    }
+
 
     private fun displayMovieDetails(movie: Movie) {
         val intent = Intent(requireActivity(), DetailsActivity::class.java)

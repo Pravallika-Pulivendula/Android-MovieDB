@@ -23,7 +23,7 @@ import com.everest.moviedb.viewmodel.MovieViewModel
 import com.everest.moviedb.viewmodel.ViewModelFactory
 
 class SearchActivity : AppCompatActivity() {
-    private var searchView: SearchView? = null
+    private lateinit var searchView: SearchView
     private lateinit var binding: ActivitySearchBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var movieRepository: MovieRepository
@@ -33,7 +33,10 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
 
-        movieRepository = MovieRepository(RetrofitClient(), MovieDatabase.getDatabase(this))
+        movieRepository = MovieRepository(
+            RetrofitClient().retrofitService,
+            MovieDatabase.getDatabase(this).movieDao()
+        )
 
         movieViewModel = ViewModelProvider(
             this,
@@ -52,7 +55,7 @@ class SearchActivity : AppCompatActivity() {
 
         val searchItem: MenuItem = menu!!.findItem(R.id.action_search)
         searchView = searchItem.actionView as SearchView
-        searchView!!.setOnQueryTextListener(
+        searchView.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
                     searchMovieByName(query)

@@ -31,8 +31,8 @@ class LatestMovieFragment : Fragment(R.layout.fragment_latest_movie) {
             this,
             ViewModelFactory(
                 MovieRepository(
-                    RetrofitClient(),
-                    MovieDatabase.getDatabase(requireContext())
+                    RetrofitClient().retrofitService,
+                    MovieDatabase.getDatabase(requireContext()).movieDao()
                 )
             )
         ).get(MovieViewModel::class.java)

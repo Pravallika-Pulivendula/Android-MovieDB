@@ -9,7 +9,7 @@ import com.everest.moviedb.adapters.PageAdapter
 import com.everest.moviedb.databinding.FragmentHomeBinding
 
 class HomeFragment : Fragment() {
-    private var _binding: FragmentHomeBinding? = null
+    private lateinit var _binding: FragmentHomeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -19,16 +19,16 @@ class HomeFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        return _binding!!.root
+        return _binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val viewPager = _binding!!.viewPager
-        viewPager.adapter = PageAdapter(childFragmentManager)
+        val viewPager = _binding.viewPager
+        viewPager.adapter = PageAdapter(childFragmentManager, requireContext())
 
-        val tabLayout = _binding!!.tabLayout
+        val tabLayout = _binding.tabLayout
         tabLayout.setupWithViewPager(viewPager)
     }
 
@@ -37,6 +37,7 @@ class HomeFragment : Fragment() {
             R.id.action_search ->
                 loadActivity()
         }
+
         return super.onOptionsItemSelected(item)
     }
 
