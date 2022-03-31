@@ -8,31 +8,26 @@ import com.everest.moviedb.models.Movie
 import com.everest.moviedb.network.MovieRepository
 import kotlinx.coroutines.launch
 
-sealed class MovieData {
-    class Data(val movieList: List<Movie>) : MovieData()
-    class Error(val errorMessage: String?) : MovieData()
-}
-
 class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
-    private val _movieData = MutableLiveData<MovieData>()
-    val movieData: LiveData<MovieData> = _movieData
+    private val _movieData = MutableLiveData<List<Movie>>()
+    val movieData: LiveData<List<Movie>> = _movieData
 
     fun getPopularMovies() {
         viewModelScope.launch {
-            _movieData.postValue(MovieData.Data(movieRepository.getPopularMovies()))
+            _movieData.postValue(movieRepository.getPopularMovies())
         }
     }
 
     fun getLatestMovies(year: Int) {
         viewModelScope.launch {
-            _movieData.postValue(MovieData.Data(movieRepository.getLatestMovies(year)))
+            _movieData.postValue(movieRepository.getLatestMovies(year))
         }
     }
 
     fun searchMovie(movieName: String) {
         viewModelScope.launch {
-            _movieData.postValue(MovieData.Data(movieRepository.searchMovie(movieName)))
+            _movieData.postValue(movieRepository.searchMovie(movieName))
         }
     }
 }

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,7 +17,6 @@ import com.everest.moviedb.network.MovieDatabase
 import com.everest.moviedb.network.MovieRepository
 import com.everest.moviedb.network.RetrofitClient
 import com.everest.moviedb.utils.MOVIE_DETAILS
-import com.everest.moviedb.viewmodel.MovieData
 import com.everest.moviedb.viewmodel.MovieViewModel
 import com.everest.moviedb.viewmodel.ViewModelFactory
 
@@ -71,13 +69,9 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun searchMovieByName(movieName: String) {
-        movieViewModel.movieData.observe(this) { movieData ->
-            when (movieData) {
-                is MovieData.Data -> setRecyclerViewAdapter(movieData.movieList)
-                is MovieData.Error -> movieData.errorMessage?.let { getToastMessage(it) }
-            }
+        movieViewModel.movieData.observe(this) {
+            setRecyclerViewAdapter(it)
         }
-
         movieViewModel.searchMovie(movieName)
     }
 
@@ -87,18 +81,13 @@ class SearchActivity : AppCompatActivity() {
         }
         val movieAdapter = RecyclerViewAdapter(movies, this)
         recyclerView.adapter = movieAdapter
-        onItemClickListener(movieAdapter, movies)
+        movieAdapter.setOnItemClickListener(itemClickListener)
     }
 
-    private fun onItemClickListener(
-        movieAdapter: RecyclerViewAdapter,
-        movies: List<Movie>
-    ) {
-        movieAdapter.setOnItemClickListener(object : RecyclerViewAdapter.OnItemClickListener {
-            override fun onItemClick(position: Int) {
-                displayMovieDetails(movies[position])
-            }
-        })
+    private val itemClickListener = object : RecyclerViewAdapter.OnItemClickListener {
+        override fun onItemClick(position: Int) {
+            displayMovieDetails(movieViewModel.movieData.value!![position])
+        }
     }
 
     private fun displayMovieDetails(movie: Movie) {
@@ -107,7 +96,4 @@ class SearchActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun getToastMessage(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
 }

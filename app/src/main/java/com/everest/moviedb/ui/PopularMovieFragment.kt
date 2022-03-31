@@ -2,9 +2,7 @@ package com.everest.moviedb.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,7 +14,6 @@ import com.everest.moviedb.network.MovieDatabase
 import com.everest.moviedb.network.MovieRepository
 import com.everest.moviedb.network.RetrofitClient
 import com.everest.moviedb.utils.MOVIE_DETAILS
-import com.everest.moviedb.viewmodel.MovieData
 import com.everest.moviedb.viewmodel.MovieViewModel
 import com.everest.moviedb.viewmodel.ViewModelFactory
 
@@ -28,7 +25,10 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        movieRepository = MovieRepository(RetrofitClient().retrofitService, MovieDatabase.getDatabase(requireContext()).movieDao())
+        movieRepository = MovieRepository(
+            RetrofitClient().retrofitService,
+            MovieDatabase.getDatabase(requireContext()).movieDao()
+        )
 
         movieViewModel = ViewModelProvider(
             this,
@@ -41,11 +41,8 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
     }
 
     private fun getPopularMovies() {
-        movieViewModel.movieData.observe(viewLifecycleOwner) { movieData ->
-            when (movieData) {
-                is MovieData.Data -> setRecyclerViewAdapter(movieData.movieList)
-                is MovieData.Error -> movieData.errorMessage?.let { getToastMessage(it) }
-            }
+        movieViewModel.movieData.observe(viewLifecycleOwner) {
+            setRecyclerViewAdapter(it)
         }
         movieViewModel.getPopularMovies()
     }
@@ -56,37 +53,19 @@ class PopularMovieFragment : Fragment(R.layout.fragment_popular_movie) {
         }
         val movieAdapter = context?.let { RecyclerViewAdapter(movies, it) }
         recyclerView.adapter = movieAdapter
-        onItemClickListener(movieAdapter, movies)
-//        movieAdapter?.setOnItemClickListener(itemClickListener)
+        movieAdapter?.setOnItemClickListener(itemClickListener)
     }
 
-    private fun onItemClickListener(
-        movieAdapter: RecyclerViewAdapter?,
-        movies: List<Movie>
-    ) {
-        movieAdapter?.setOnItemClickListener(object : RecyclerViewAdapter.OnItemClickListener {
-            override fun onItemClick(position: Int) {
-                displayMovieDetails(movies[position])
-            }
-        })
+    private val itemClickListener = object : RecyclerViewAdapter.OnItemClickListener {
+        override fun onItemClick(position: Int) {
+            displayMovieDetails(movieViewModel.movieData.value!![position])
+        }
     }
-
-//    private val itemClickListener = object : RecyclerViewAdapter.OnItemClickListener {
-//        override fun onItemClick(position: Int) {
-//            displayMovieDetails(movies[position])
-//        }
-//    }
-
 
     private fun displayMovieDetails(movie: Movie) {
         val intent = Intent(requireActivity(), DetailsActivity::class.java)
         intent.putExtra(MOVIE_DETAILS, movie)
         startActivity(intent)
     }
-
-    private fun getToastMessage(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
 }
 
