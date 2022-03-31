@@ -15,5 +15,5 @@ interface MovieDao {
     suspend fun getLatestMoviesFromDb(year: Int): List<Movie>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addMovies(movies: List<Movie>)
+    suspend fun addMovies(movies: List<com.everest.moviedb.network.models.Movie>)
 }
