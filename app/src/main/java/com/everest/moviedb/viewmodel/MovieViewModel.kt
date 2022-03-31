@@ -20,37 +20,19 @@ class MovieViewModel(private val movieRepository: MovieRepository) : ViewModel()
 
     fun getPopularMovies() {
         viewModelScope.launch {
-            try {
-                val response = movieRepository.getPopularMovies()
-                _movieData.postValue(MovieData.Data(response))
-                movieRepository.addMovies(response)
-            } catch (e: java.lang.Exception) {
-                _movieData.postValue(MovieData.Data(movieRepository.getPopularMoviesFromDb()))
-            }
+            _movieData.postValue(MovieData.Data(movieRepository.getPopularMovies()))
         }
     }
 
     fun getLatestMovies(year: Int) {
         viewModelScope.launch {
-            try {
-                val response = movieRepository.getLatestMovies(year)
-                _movieData.postValue(MovieData.Data(response))
-                movieRepository.addMovies(response)
-            } catch (e: Exception) {
-                _movieData.postValue(MovieData.Data(movieRepository.getLatestMoviesFromDb(year)))
-            }
+            _movieData.postValue(MovieData.Data(movieRepository.getLatestMovies(year)))
         }
     }
 
     fun searchMovie(movieName: String) {
         viewModelScope.launch {
-            try {
-                val response = movieRepository.searchMovie(movieName)
-                _movieData.postValue(MovieData.Data(response))
-                movieRepository.addMovies(response)
-            } catch (e: Exception) {
-                _movieData.postValue(MovieData.Error(e.localizedMessage))
-            }
+            _movieData.postValue(MovieData.Data(movieRepository.searchMovie(movieName)))
         }
     }
 }
