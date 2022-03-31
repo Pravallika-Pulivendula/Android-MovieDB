@@ -1,11 +1,12 @@
-package com.everest.moviedb.models
+package com.everest.moviedb.network.models
 
-import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.Parcelize
 
-@Parcelize
-class Movie(
+@Entity(tableName = "movies")
+data class Movie(
+    @PrimaryKey(autoGenerate = true)
     val id: Int,
     val overview: String,
 
@@ -16,4 +17,4 @@ class Movie(
 
     @SerializedName("release_date")
     val releaseDate: String,
-) : Parcelable
+)
